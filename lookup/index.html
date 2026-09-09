@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07050f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LOOK UP">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<title>LOOK UP — Social Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07050f;--panel:rgba(20,15,35,.75);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--text:#f5f5f7;--muted:#9ca3af;--purple:#8b5cf6;--pink:#ec4899;--red:#f43f5e;--green:#10b981;--cyan:#06b6d4}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);overflow:hidden}
+body{color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+button,input,textarea,select{font:inherit}
+button{color:inherit}
+
+body:before, body:after{content:"";position:fixed;width:450px;height:450px;border-radius:50%;z-index:-5;filter:blur(90px);opacity:.4;animation:floatGlow 10s infinite alternate ease-in-out}
+body:before{background:var(--purple);top:-100px;left:-100px}
+body:after{background:var(--pink);bottom:-100px;right:-100px;animation-delay:-5s}
+
+@keyframes floatGlow {
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(30px, 40px) scale(1.1)}
+}
+
+.glass{background:var(--panel);backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.topbar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--line);position:relative;z-index:20}
+.brand{font-weight:800;font-size:22px;background:linear-gradient(135deg,#a78bfa,#f472b6,#06b6d4);-webkit-background-clip:text;color:transparent;display:flex;gap:8px;align-items:center;cursor:pointer;filter:drop-shadow(0 0 15px rgba(167,139,250,.4))}
+.search{width:min(360px,40vw);position:relative}.search input{width:100%;height:40px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;padding:0 15px 0 40px;outline:none;transition:all .3s}.search input:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(139,92,246,.3)}.search-icon{position:absolute;left:13px;top:11px;opacity:.55}
+.actions{display:flex;gap:10px;align-items:center}.icon{width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;cursor:pointer;transition:all .2s}.icon:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+.avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--purple);cursor:pointer;box-shadow:0 0 10px rgba(139,92,246,.5)}
+.layout{height:calc(100vh - 66px);display:grid;grid-template-columns:250px minmax(0,1fr) 270px}
+.side{padding:15px;border-right:1px solid var(--line);overflow:auto}.right{border-right:0;border-left:1px solid var(--line)}
+.menu{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:13px;cursor:pointer;font-size:14px;font-weight:700;color:#eee;transition:all .2s}.menu:hover,.menu.active{background:rgba(255,255,255,.09);color:#a78bfa;transform:translateX(3px)}
+.section{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--muted);margin:18px 10px 9px}
+.feed{overflow:auto;padding:14px;scroll-behavior:smooth}.feed-inner{width:min(540px,100%);margin:auto}
+.stories{height:112px;border-radius:18px;padding:10px;display:flex;gap:13px;align-items:center;overflow-x:auto;scrollbar-width:none;margin-bottom:15px}.stories::-webkit-scrollbar{display:none}
+.story{min-width:69px;text-align:center;cursor:pointer}.story-ring{width:64px;height:64px;border-radius:50%;padding:2px;margin:auto;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}.story-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #0b0813}.story-name{display:block;margin-top:5px;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.post{border-radius:20px;padding:15px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);transition:transform .3s}.post:hover{border-color:rgba(139,92,246,.3)}
+.post-head{display:flex;justify-content:space-between;align-items:center}.user{display:flex;gap:9px;align-items:center;cursor:pointer}.user img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:1.5px solid var(--purple)}.user b{font-size:13px}.user small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.post-img{width:100%;max-height:560px;object-fit:cover;border-radius:14px;margin-top:12px;display:block}.post-actions{display:flex;gap:17px;padding:11px 0 6px}.action{border:0;background:none;display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;cursor:pointer;color:var(--text)}.liked svg{fill:var(--red);stroke:var(--red)}.caption{font-size:13px;line-height:1.55}.comment{display:flex;gap:7px;margin-top:11px;border-top:1px solid var(--line);padding-top:10px}.comment input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#fff;border-radius:20px;padding:8px 13px;outline:none}
+.contact{display:flex;align-items:center;gap:10px;padding:9px;border-radius:12px;cursor:pointer;transition:background .2s}.contact:hover{background:rgba(255,255,255,.07)}.contact img{width:40px;height:40px;border-radius:50%;object-fit:cover}.online{width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid #0c0913;position:absolute;right:0;bottom:1px}.avwrap{position:relative}.contact b{font-size:12px}.contact small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.modal{position:fixed;inset:0;background:rgba(5,3,10,.8);backdrop-filter:blur(16px);display:none;place-items:center;z-index:100;padding:18px;animation:fadeIn .3s ease}.modal.open{display:grid}
+@keyframes fadeIn {from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.card{width:min(440px,100%);max-height:92vh;overflow:auto;border-radius:28px;padding:30px;position:relative;border:1px solid rgba(255,255,255,.15);box-shadow:0 25px 60px rgba(0,0,0,.7)}
+.close{position:absolute;right:18px;top:16px;border:0;background:none;font-size:24px;color:var(--muted);cursor:pointer;transition:color .2s}.close:hover{color:#fff}
+.title{font-size:22px;font-weight:800;margin-bottom:8px;background:linear-gradient(to right,#fff,#a78bfa);-webkit-background-clip:text;color:transparent}
+.field{margin:15px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.8px}.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;color:#fff;padding:13px 15px;outline:none;transition:all .3s}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(139,92,246,.3);background:rgba(255,255,255,.07)}
+.primary{border:0;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--pink));padding:13px 18px;font-weight:800;cursor:pointer;width:100%;color:#fff;transition:all .3s;box-shadow:0 8px 25px rgba(236,72,153,.3)}.primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(236,72,153,.5)}
+.secondary{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer;width:100%;color:#fff;transition:all .3s}.secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+.logout-btn{border:1px solid rgba(244,63,94,.3);background:rgba(244,63,94,.1);color:#f43f5e;border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer;width:100%;transition:all .3s;margin-top:15px}.logout-btn:hover{background:rgba(244,63,94,.2);border-color:rgba(244,63,94,.5)}
+.row{display:flex;gap:9px}.muted{color:var(--muted);font-size:12px;line-height:1.6}
+.tabs{display:flex;gap:8px;margin-bottom:20px;background:rgba(0,0,0,.3);padding:4px;border-radius:14px;border:1px solid var(--line)}
+.tab{flex:1;padding:10px;border:0;background:transparent;border-radius:10px;cursor:pointer;font-weight:700;font-size:12px;color:var(--muted);transition:all .3s}.tab.active{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;box-shadow:0 4px 15px rgba(139,92,246,.4)}
+.auth-card{overflow:hidden;background:linear-gradient(145deg,rgba(25,18,45,.92),rgba(10,8,20,.92));border-color:rgba(255,255,255,.18);animation:authPop .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes authPop{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+.auth-glow{position:absolute;width:220px;height:220px;right:-90px;top:-100px;background:var(--purple);filter:blur(70px);opacity:.28;pointer-events:none}
+.auth-logo{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:27px;font-weight:800;margin-bottom:13px;background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 12px 35px rgba(139,92,246,.35);animation:logoFloat 3s ease-in-out infinite}
+.auth-logo.small{font-size:22px;margin-bottom:12px}
+@keyframes logoFloat{50%{transform:translateY(-4px) rotate(2deg)}}
+.auth-subtitle{max-width:340px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:20px 0 7px;padding:5px;border:1px solid var(--line);border-radius:16px;background:rgba(0,0,0,.22)}
+.auth-tab{border:0;background:transparent;color:var(--muted);padding:11px;border-radius:11px;font-weight:800;cursor:pointer;transition:.3s}
+.auth-tab.active{background:linear-gradient(135deg,rgba(139,92,246,.95),rgba(236,72,153,.95));color:#fff;box-shadow:0 7px 20px rgba(139,92,246,.25);transform:translateY(-1px)}
+.auth-progress{height:2px;background:rgba(255,255,255,.07);border-radius:9px;overflow:hidden;margin-bottom:3px}
+.auth-progress span{display:block;width:50%;height:100%;background:linear-gradient(90deg,var(--purple),var(--pink),var(--cyan));transition:width .35s ease}
+.optional{font-weight:500;color:#70778a}
+.google-btn{width:100%;margin-top:9px;padding:12px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:#fff;color:#111827;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;cursor:pointer;transition:.25s}
+.google-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.28)}
+.google-mark{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:#fff;color:#4285f4}
+.auth-main{margin-top:4px}
+.auth-foot{text-align:center;color:#6f7484;font-size:10px;margin-top:14px}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 12px}
+.profile-stat{padding:13px 7px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid var(--line);text-align:center}
+.profile-stat b{display:block;font-size:16px}.profile-stat span{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.follow-btn{border:0;border-radius:12px;padding:9px 15px;background:linear-gradient(135deg,var(--purple),var(--pink));font-weight:800;cursor:pointer}
+.follow-btn.following{background:rgba(255,255,255,.09);border:1px solid var(--line)}
+
+.otp{letter-spacing:12px;text-align:center;font-size:26px;font-weight:800;color:#a78bfa}
+.notice{padding:12px 14px;border-radius:14px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,0.3);font-size:11px;margin:15px 0;line-height:1.5}
+.error{color:#f43f5e;font-size:11px;margin-top:8px;font-weight:600}.success{color:#6ee7b7;font-size:11px;margin-top:8px;font-weight:600}
+.settings-grid{display:grid;grid-template-columns:150px 1fr;gap:16px}.settings-nav{display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--line);padding-right:10px}.settab{padding:9px;border-radius:9px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}.settab.active{color:#a78bfa;background:rgba(255,255,255,.08)}
+.download{padding:15px;border-radius:16px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);margin-top:12px}.download b{font-size:13px}.download p{font-size:10px;color:var(--muted);margin:5px 0 11px}
+.chat{position:fixed;right:20px;bottom:0;width:310px;height:390px;border-radius:18px 18px 0 0;display:none;flex-direction:column;z-index:90}.chat.open{display:flex}.chathead{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-weight:800;font-size:13px}.chatbody{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}.msg{padding:8px 11px;border-radius:14px;max-width:80%;font-size:12px}.in{background:rgba(255,255,255,.1);align-self:flex-start}.out{background:var(--purple);align-self:flex-end}.chatfoot{padding:8px;border-top:1px solid var(--line);display:flex;gap:6px}.chatfoot input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:7px 11px;color:#fff;outline:none}
+.bottom{display:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.side,.right{display:none}.bottom{display:flex;position:fixed;bottom:0;left:0;right:0;height:62px;z-index:40;align-items:center;justify-content:space-around;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}.feed{padding-bottom:75px}.topbar{padding:9px 12px}.brand{font-size:18px}.search{width:42vw}.actions .hide-mobile{display:none}.stories{border-radius:15px;height:102px}.post{border-radius:17px}.chat{right:8px;width:calc(100% - 16px)}}
+@media(max-width:560px){.search{width:43vw}.search input{height:36px}.avatar{width:35px;height:35px}.icon{width:36px;height:36px}.settings-grid{grid-template-columns:1fr}.settings-nav{border-right:0;border-bottom:1px solid var(--line);padding:0 0 8px;display:grid;grid-template-columns:1fr 1fr}.card{padding:18px}.otp{letter-spacing:7px;font-size:22px}}
+</style>
+</head>
+<body>
+<header class="topbar glass">
+  <div class="brand" onclick="location.reload()">◈ LOOK UP</div>
+  <div class="search"><span class="search-icon">⌕</span><input id="search" placeholder="Search people..." oninput="searchUsers(this.value)"></div>
+  <div class="actions">
+    <button class="icon hide-mobile" onclick="openStudio()">▣</button>
+    <button class="icon hide-mobile" onclick="toggle('notifications')">♧</button>
+    <img id="topAvatar" class="avatar" onclick="openProfile()" src="https://i.pravatar.cc/100?img=12">
+  </div>
+</header>
+
+<div id="notifications" class="glass" style="display:none;position:fixed;right:20px;top:65px;width:300px;z-index:60;padding:12px;border-radius:16px">
+  <div class="section" style="margin:0 0 8px">NOTIFICATIONS</div>
+  <div class="contact"><img src="https://i.pravatar.cc/100?img=5"><div><b>Chamal_99 liked your reel</b><small>2m ago</small></div></div>
+  <div class="contact"><img src="https://i.pravatar.cc/100?img=8"><div><b>Nethmi_x commented on your post</b><small>15m ago</small></div></div>
+</div>
+
+<div class="layout">
+  <aside class="side glass">
+    <div class="menu active">⌂ Home Feed</div>
+    <div class="menu" onclick="openStudio()">＋ Studio / Camera</div>
+    <div class="menu" onclick="openSimple('Groups','Communities and groups you follow.')">♧ Groups</div>
+    <div class="menu" onclick="openSimple('Pages','Pages you follow.')">▤ Pages</div>
+    <div class="menu" onclick="openProfile()">◉ Profile & Bio</div>
+    <div class="section">PREFERENCES</div>
+    <div class="menu" onclick="openSettings()">⚙ Settings</div>
+    <div class="menu" onclick="openSettings('privacy')">🔒 Privacy & Cookies</div>
+    <div class="download"><b>📲 Install LOOK UP</b><p>Use the web app like a mobile/PC app. Add a shortcut to your home screen.</p><button class="secondary" style="width:100%" onclick="installApp()">Install / Add shortcut</button></div>
+  </aside>
+
+  <main class="feed"><div class="feed-inner">
+    <div id="stories" class="stories glass"></div>
+    <div id="feed"></div>
+  </div></main>
+
+  <aside class="side right glass"><div class="section" style="margin-top:3px">ACTIVE MESSENGER</div><div id="contacts"></div></aside>
+</div>
+
+<nav class="bottom glass">
+  <button class="icon" onclick="scrollTopFeed()">⌂</button>
+  <button class="icon" onclick="openStudio()">＋</button>
+  <button class="icon" onclick="openProfile()">◉</button>
+  <button class="icon" onclick="openSettings()">⚙</button>
+</nav>
+
+<div id="authModal" class="modal open">
+  <div class="card glass auth-card">
+    <button class="close" onclick="closeModal('authModal')">×</button>
+    <div class="auth-glow"></div>
+    <div class="auth-logo">◈</div>
+    <div class="title">Welcome to LOOK UP</div>
+    <p class="muted auth-subtitle">A modern social studio for your people, posts and creative moments.</p>
+
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active" onclick="setAuthMode('login')">Sign in</button>
+      <button id="registerTab" class="auth-tab" onclick="setAuthMode('register')">Create account</button>
+    </div>
+
+    <div class="auth-progress"><span id="authProgress"></span></div>
+
+    <div class="field">
+      <label>USERNAME</label>
+      <input id="quickName" placeholder="Your username" maxlength="30" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>EMAIL</label>
+      <input id="quickEmail" type="email" placeholder="you@gmail.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>MOBILE NUMBER <span class="optional">(OPTIONAL)</span></label>
+      <input id="quickPhone" type="tel" placeholder="+94 77 123 4567" autocomplete="tel">
+    </div>
+
+    <button class="primary auth-main" onclick="requestCode()">Continue with email</button>
+    <button class="google-btn" onclick="googleLogin()">
+      <span class="google-mark">G</span><span>Continue with Google</span>
+    </button>
+    <div id="authMsg"></div>
+    <div class="notice">🔐 We’ll email you a one-time verification code. No password is stored.</div>
+    <div class="auth-foot">By continuing, you agree to use LOOK UP responsibly.</div>
+  </div>
+</div>
+
+<div id="otpModal" class="modal">
+  <div class="card glass auth-card">
+    <button class="close" onclick="closeModal('otpModal')">×</button>
+    <div class="auth-logo small">✦</div>
+    <div class="title">Check your email</div>
+    <p id="otpText" class="muted">We sent a 6-digit verification code.</p>
+    <div class="field">
+      <label>VERIFICATION CODE</label>
+      <input id="otpInput" class="otp" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••">
+    </div>
+    <button class="primary" onclick="verifyCode()">Verify & enter LOOK UP</button>
+    <button class="secondary" style="margin-top:9px" onclick="closeModal('otpModal')">Back</button>
+    <div id="otpMsg"></div>
+  </div>
+</div>
+
+<div id="profileModal" class="modal"><div class="card glass">
+  <button class="close" onclick="closeModal('profileModal')">×</button><div class="title">Profile</div>
+  <div style="text-align:center"><img id="profileAvatar" src="" class="avatar" style="width:90px;height:90px"><h2 id="profileName" style="margin-top:8px">LOOK UP User</h2><p id="profileHandle" style="color:#a78bfa;font-weight:700;font-size:12px">@lookup_user</p><p id="profileBio" class="muted" style="margin:10px 0">Welcome to LOOK UP</p><div class="profile-stats"><div class="profile-stat"><b id="profilePosts">0</b><span>Posts</span></div><div class="profile-stat"><b id="profileFollowers">0</b><span>Followers</span></div><div class="profile-stat"><b id="profileFollowing">0</b><span>Following</span></div></div><button id="profileFollowBtn" class="follow-btn" style="display:none" onclick="toggleFollow()">Follow</button></div>
+  <div class="section">POSTS & REELS</div><div id="profileGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px"></div>
+</div></div>
+
+<div id="settingsModal" class="modal"><div class="card glass">
+  <button class="close" onclick="closeSettingsModal()">×</button><div class="title">Settings</div>
+  <div class="settings-grid"><div class="settings-nav">
+    <div class="settab active" data-tab="general" onclick="settingsTab('general',this)">General</div>
+    <div class="settab" data-tab="profile" onclick="settingsTab('profile',this)">Edit Profile</div>
+    <div class="settab" data-tab="privacy" onclick="settingsTab('privacy',this)">Privacy</div>
+    <div class="settab" data-tab="install" onclick="settingsTab('install',this)">Mobile / PC App</div>
+  </div><div id="settingsContent"></div></div>
+</div></div>
+
+<div id="simpleModal" class="modal"><div class="card glass"><button class="close" onclick="closeModal('simpleModal')">×</button><div id="simpleTitle" class="title"></div><p id="simpleText" class="muted"></p></div></div>
+
+<div id="studioModal" class="modal"><div class="card glass">
+  <button class="close" onclick="closeStudio()">×</button><div class="title">LOOK UP Studio</div>
+  <video id="video" autoplay playsinline muted style="width:100%;height:300px;object-fit:cover;background:#000;border-radius:16px"></video>
+  <div style="display:flex;gap:7px;overflow:auto;margin:10px 0"><button class="secondary" onclick="filter('none')">Normal</button><button class="secondary" onclick="filter('saturate(2) contrast(1.2)')">Cyber</button><button class="secondary" onclick="filter('sepia(.8)')">Vintage</button><button class="secondary" onclick="filter('grayscale(1) contrast(1.4)')">Noir</button></div>
+  <button class="primary" onclick="alert('Camera studio ready — connect your video storage/backend to save recordings.')">Record</button>
+</div></div>
+
+<div id="chat" class="chat glass"><div class="chathead"><span id="chatName">Messenger</span><button class="close" style="position:static;font-size:20px" onclick="closeChat()">×</button></div><div id="chatBody" class="chatbody"><div class="msg in">Machan kooheda inne? 👋</div></div><div class="chatfoot"><input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()"><button class="icon" style="width:32px;height:32px" onclick="sendChat()">➤</button></div></div>
+
+<script>
+const users=[
+ {name:"Chamal_99",handle:"@chamal99",avatar:"https://i.pravatar.cc/100?img=5",followers:1280,following:340},
+ {name:"Nethmi_x",handle:"@nethmi_vlogs",avatar:"https://i.pravatar.cc/100?img=8",followers:842,following:221},
+ {name:"DasunPhotography",handle:"@dasun_clicks",avatar:"https://i.pravatar.cc/100?img=11",followers:3910,following:610},
+ {name:"Shenaya_Vlogs",handle:"@shenaya_official",avatar:"https://i.pravatar.cc/100?img=9",followers:2140,following:430}
+];
+let authModeValue='login', stream=null, deferredPrompt=null, currentProfileId=null;
+const me={id:null,name:"LOOK UP User",handle:"@lookup_user",bio:"Welcome to LOOK UP",avatar:"https://i.pravatar.cc/100?img=12",followers:0,following:0,posts:0};
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});
+function q(id){return document.getElementById(id)}
+function toggle(id){const e=q(id);e.style.display=e.style.display==='block'?'none':'block'}
+function openModal(id){q(id).classList.add('open')} function closeModal(id){q(id).classList.remove('open')}
+function closeSettingsModal(){q('settingsModal').classList.remove('open')}
+
+function setAuthMode(mode){
+  authModeValue=mode;
+  q('loginTab').classList.toggle('active',mode==='login');
+  q('registerTab').classList.toggle('active',mode==='register');
+  q('authProgress').style.width=mode==='login'?'50%':'100%';
+  q('authMsg').textContent='';
+  q('quickName').style.display=mode==='register'?'block':'block';
+  q('quickName').previousElementSibling.textContent=mode==='register'?'USERNAME':'USERNAME (OPTIONAL)';
+  q('quickEmail').focus();
+}
+
+async function requestCode(){
+  const name=q('quickName').value.trim();
+  const email=q('quickEmail').value.trim().toLowerCase();
+  const phone=q('quickPhone').value.trim();
+  const msg=q('authMsg');
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg.className='error';msg.textContent='Enter a valid email address.';return}
+  if(authModeValue==='register' && !name){msg.className='error';msg.textContent='Choose a username first.';return}
+  msg.className='muted';msg.textContent='Sending your secure verification code…';
+  try{
+    const r=await fetch('/api/auth/request-code',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,email,phone,mode:authModeValue})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'Could not send the code.');
+    q('otpText').textContent=`We sent a 6-digit code to ${email}. It expires in 10 minutes.`;
+    q('otpInput').value='';
+    openModal('otpModal'); msg.textContent='';
+  }catch(e){msg.className='error';msg.textContent=e.message}
+}
+
+async function verifyCode(){
+  const email=q('quickEmail').value.trim().toLowerCase();
+  const code=q('otpInput').value.trim();
+  const name=q('quickName').value.trim();
+  const phone=q('quickPhone').value.trim();
+  const msg=q('otpMsg');
+  if(!/^\d{6}$/.test(code)){msg.className='error';msg.textContent='Enter the 6-digit code.';return}
+  msg.className='muted';msg.textContent='Verifying…';
+  try{
+    const r=await fetch('/api/auth/verify-code',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,code,name,phone,mode:authModeValue})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'Verification failed.');
+    applyUser(d.user);closeModal('otpModal');closeModal('authModal');renderStories();
+  }catch(e){msg.className='error';msg.textContent=e.message}
+}
+
+function googleLogin(){location.href='/api/auth/google'}
+
+async function restoreSession(){
+  try{
+    const r=await fetch('/api/me',{credentials:'include'});
+    if(!r.ok)return false;
+    const d=await r.json(); if(!d.user)return false;
+    applyUser(d.user); closeModal('authModal'); return true;
+  }catch(e){return false}
+}
+async function logoutAccount(){
+  try{await fetch('/api/logout',{method:'POST'})}catch(e){}
+  location.reload();
+}
+function applyUser(u){Object.assign(me,u);q('topAvatar').src=me.avatar||'https://i.pravatar.cc/100?img=12';renderProfile()}
+function renderProfile(){
+  q('profileAvatar').src=me.avatar||'https://i.pravatar.cc/100?img=12';
+  q('profileName').textContent=me.name||'LOOK UP User';
+  q('profileHandle').textContent=me.handle||'';
+  q('profileBio').textContent=me.bio||'Welcome to LOOK UP';
+  q('profilePosts').textContent=me.posts||0;
+  q('profileFollowers').textContent=me.followers||0;
+  q('profileFollowing').textContent=me.following||0;
+  q('profileGrid').innerHTML=Array.from({length:9},(_,i)=>`<img src="https://picsum.photos/seed/lookup${i+40}/220/220" style="width:100%;height:100px;object-fit:cover;border-radius:8px">`).join('');
+}
+function renderStories(){q('stories').innerHTML=`<div class="story" onclick="openStudio()"><div class="story-ring" style="background:rgba(255,255,255,.22)"><img src="${me.avatar}"></div><span class="story-name">Your story</span></div>`+users.map(u=>`<div class="story"><div class="story-ring"><img src="${u.avatar}"></div><span class="story-name">${u.name}</span></div>`).join('')}
+function renderFeed(){q('feed').innerHTML=Array.from({length:6},(_,i)=>{const u=users[i%users.length];return `<article class="post glass"><div class="post-head"><div class="user" onclick="openPublicProfile(${i})"><img src="${u.avatar}"><div><b>${u.name}</b><small>${u.handle} · ${i+1}h ago</small></div></div><span>•••</span></div><img class="post-img" src="https://picsum.photos/seed/lookupfeed${i+1}/700/760"><div class="post-actions"><button class="action" onclick="like(this)">♡ <span>${12+i*37}</span></button><button class="action">◯ <span>${2+i}</span></button><button class="action">➤</button></div><div class="caption"><b>${u.name}</b> ✨ Vibing on the new LOOK UP studio! 🚀 #social #vibes</div><div class="comment"><input placeholder="Add a comment..." onkeydown="if(event.key==='Enter'){this.value=''}"></div></article>`}).join('')}
+function like(b){b.classList.toggle('liked');const s=b.querySelector('span');s.textContent=+s.textContent+(b.classList.contains('liked')?1:-1)}
+function renderContacts(){q('contacts').innerHTML=users.map(u=>`<div class="contact" onclick="openChat('${u.name}')"><div class="avwrap"><img src="${u.avatar}"><span class="online"></span></div><div><b>${u.name}</b><small>Active now</small></div></div>`).join('')}
+function searchUsers(v){if(!v.trim())return;const found=users.filter(u=>(u.name+u.handle).toLowerCase().includes(v.toLowerCase()));if(found[0])openPublicProfile(users.indexOf(found[0]))}
+function openProfile(){
+  currentProfileId=null;
+  q('profileName').textContent=me.name||'LOOK UP User';
+  q('profileHandle').textContent=me.handle||'';
+  q('profileBio').textContent=me.bio||'Welcome to LOOK UP';
+  q('profileAvatar').src=me.avatar||'https://i.pravatar.cc/100?img=12';
+  q('profilePosts').textContent=me.posts||0;
+  q('profileFollowers').textContent=fmt(me.followers||0);
+  q('profileFollowing').textContent=fmt(me.following||0);
+  q('profileFollowBtn').style.display='none';
+  openModal('profileModal');
+}
+function openPublicProfile(i){const u=users[i];currentProfileId=u.id||null;q('profileName').textContent=u.name;q('profileHandle').textContent=u.handle;q('profileBio').textContent='LOOK UP creator ✨';q('profileAvatar').src=u.avatar;q('profilePosts').textContent='12';q('profileFollowers').textContent=fmt(u.followers);q('profileFollowing').textContent=fmt(u.following);q('profileFollowBtn').style.display='inline-block';q('profileFollowBtn').textContent='Follow';q('profileFollowBtn').classList.remove('following');openModal('profileModal')}
+function fmt(n){return Number(n||0).toLocaleString()}
+async function toggleFollow(){
+  const b=q('profileFollowBtn'); if(!currentProfileId){b.classList.toggle('following');b.textContent=b.classList.contains('following')?'Following':'Follow';return}
+  try{const r=await fetch('/api/follow',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({userId:currentProfileId})});const d=await r.json();if(!r.ok)throw Error(d.error);b.classList.toggle('following',d.following);b.textContent=d.following?'Following':'Follow';applyUser({...me,followers:d.myFollowers,following:d.myFollowing})}catch(e){alert(e.message)}
+}
+function openChat(n){q('chatName').textContent=n;openChatBox()}
+function openChatBox(){q('chat').classList.add('open')}function closeChat(){q('chat').classList.remove('open')}
+function sendChat(){const i=q('chatInput'),v=i.value.trim();if(!v)return;q('chatBody').insertAdjacentHTML('beforeend',`<div class="msg out">${escapeHtml(v)}</div>`);i.value='';setTimeout(()=>q('chatBody').insertAdjacentHTML('beforeend','<div class="msg in">👍</div>'),700)}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function openSimple(t,s){q('simpleTitle').textContent=t;q('simpleText').textContent=s;openModal('simpleModal')}
+function settingsTab(tab,el){
+ document.querySelectorAll('.settab').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');const a=q('settingsContent');
+ if(tab==='general')a.innerHTML=`<div class="field"><label>LANGUAGE</label><select><option>English</option><option>Sinhala (සිංහල)</option></select></div><button class="primary" style="margin-bottom:10px">Save</button><button class="logout-btn" onclick="logoutAccount()">Log Out</button>`;
+ else if(tab==='profile')a.innerHTML=`<div class="field"><label>DISPLAY NAME</label><input id="editName" value="${escapeHtml(me.name)}"></div><div class="field"><label>BIO</label><textarea id="editBio" rows="4">${escapeHtml(me.bio)}</textarea></div><button class="primary" onclick="saveProfile()">Save profile</button>`;
+ else if(tab==='privacy')a.innerHTML=`<div class="field"><label>ACCOUNT VISIBILITY</label><select><option>Public</option><option>Private</option></select></div><div class="field"><label>MESSAGES</label><select><option>Everyone</option><option>Followers only</option></select></div><button class="logout-btn" onclick="logoutAccount()">Log Out</button>`;
+ else a.innerHTML=`<div class="download"><b>📲 Mobile / PC App</b><p>Install LOOK UP as a PWA on supported browsers.</p><button class="primary" onclick="installApp()">Install / Add to Home Screen</button></div>`;
+}
+function saveProfile(){me.name=q('editName').value.trim()||me.name;me.bio=q('editBio').value.trim();applyUser(me);closeSettingsModal()}
+function openSettings(tab='general'){openModal('settingsModal');settingsTab(tab,document.querySelector(`.settab[data-tab="${tab}"]`))}
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>deferredPrompt=null)}else alert('Use your browser menu → Install LOOK UP / Add to Home Screen.')}
+async function openStudio(){openModal('studioModal');try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});q('video').srcObject=stream}catch(e){}}
+function closeStudio(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}closeModal('studioModal')}
+function filter(v){q('video').style.filter=v}
+function scrollTopFeed(){document.querySelector('.feed').scrollTo({top:0,behavior:'smooth'})}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  renderStories();renderFeed();renderContacts();renderProfile();setAuthMode('login');
+  if(!(await restoreSession())) q('authModal').classList.add('open');
+});
+</script>
+</body>
+</html>
